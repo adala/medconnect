@@ -29,7 +29,7 @@ class GEParser extends BaseXmlParser {
         // Extract measurements
         const measurements = this.extractMeasurements(root);
         
-        // Extract waveform data
+        // Extract waveform data - FIXED: Extract all leads properly
         const waveformData = this.extractWaveformData(root);
         
         // Extract recording time
@@ -42,12 +42,14 @@ class GEParser extends BaseXmlParser {
         const fileHash = await this.calculateHash(rawContent);
         
         // Debug logging
-        console.log('📊 GEParser extracted measurements:', measurements);
-        console.log('📊 GEParser extracted deviceInfo:', deviceInfo);
-        console.log('📊 GEParser extracted waveform:', waveformData ? 'Yes' : 'No');
-        console.log('📊 GEParser extracted interpretation:', interpretation ? 'Yes' : 'No');
+        console.log('📊 GEParser extracted waveform:', {
+            type: typeof waveformData,
+            isArray: Array.isArray(waveformData),
+            hasLeadArray: waveformData?.Lead ? true : false,
+            leadCount: waveformData?.Lead?.length,
+            leadIds: waveformData?.Lead?.map(l => l.LeadID)
+        });
         
-        // Return data with proper structure (aligned with Mindray)
         return {
             patientId: patientId,
             vendor: this.vendorName,
@@ -57,7 +59,6 @@ class GEParser extends BaseXmlParser {
             waveform: waveformData,
             recordingTime: recordingTime,
             interpretation: interpretation,
-            // Include individual measurement fields for direct access
             heartRate: measurements?.heartRate || null,
             prInterval: measurements?.prInterval || null,
             qrsDuration: measurements?.qrsDuration || null,
@@ -65,9 +66,7 @@ class GEParser extends BaseXmlParser {
             metadata: {
                 fileHash: fileHash,
                 parserVersion: this.version,
-                parseTimestamp: new Date().toISOString(),
-                rawMeasurements: measurements,
-                rawDeviceInfo: deviceInfo
+                parseTimestamp: new Date().toISOString()
             }
         };
     }
@@ -100,7 +99,7 @@ class GEParser extends BaseXmlParser {
     extractMeasurements(root) {
         const measurements = root.Measurements || root.RestingECG || {};
         
-        const result = {
+        return {
             heartRate: this.parseIntSafe(measurements.VentricularRate || measurements.HeartRate),
             prInterval: this.parseIntSafe(measurements.PRInterval),
             qrsDuration: this.parseIntSafe(measurements.QRSDuration),
@@ -110,129 +109,213 @@ class GEParser extends BaseXmlParser {
             qrsAxis: this.parseIntSafe(measurements.QRSAxis),
             tAxis: this.parseIntSafe(measurements.TAxis)
         };
-        
-        console.log('📈 GEParser measurements extracted:', result);
-        return result;
     }
 
     extractWaveformData(root) {
+        // Try multiple possible locations for waveform data
         let waveformData = null;
         
-        // Try to get rhythm strip
+        // Method 1: Check for WaveformData with RhythmStrip
         const rhythmStrip = this.getValueByPath(root, 'WaveformData.RhythmStrip');
-        if (rhythmStrip) {
-            waveformData = {
-                LeadConfig: 'Standard 12-Lead',
-                SampleRate: 500,
-                Gain: 10,
-                Lead: [
-                    {
-                        LeadID: 'II',
-                        Data: rhythmStrip
-                    }
-                ]
-            };
-            console.log('🌊 Using rhythm strip waveform data');
+        if (rhythmStrip && typeof rhythmStrip === 'string') {
+            waveformData = this.parseWaveformString(rhythmStrip);
         }
         
-        // Try to get ECG waveform data
+        // Method 2: Check for ECGWaveform.Data
         if (!waveformData) {
             const ecgWaveform = this.getValueByPath(root, 'ECGWaveform.Data');
-            if (ecgWaveform) {
-                waveformData = {
-                    LeadConfig: 'Standard 12-Lead',
-                    SampleRate: 500,
-                    Gain: 10,
-                    Lead: [
-                        {
-                            LeadID: 'II',
-                            Data: ecgWaveform
-                        }
-                    ]
-                };
-                console.log('🌊 Using ECG waveform data');
+            if (ecgWaveform && typeof ecgWaveform === 'string') {
+                waveformData = this.parseWaveformString(ecgWaveform);
             }
         }
         
-        // Try to get full lead data
+        // Method 3: Check for Lead array in WaveformData
+        const leadArray = this.getValueByPath(root, 'WaveformData.Lead');
+        if (leadArray && Array.isArray(leadArray)) {
+            waveformData = this.processLeadArray(leadArray);
+            console.log('✅ Found GE Lead array with', leadArray.length, 'leads');
+        }
+        
+        // Method 4: Check for direct Waveform tag
         if (!waveformData) {
-            const leads = this.getValueByPath(root, 'WaveformData.Lead');
-            if (leads && Array.isArray(leads)) {
-                waveformData = {
-                    LeadConfig: 'Standard 12-Lead',
-                    SampleRate: 500,
-                    Gain: 10,
-                    Lead: leads.map(lead => ({
-                        LeadID: lead.LeadID,
-                        Data: lead.Data
-                    }))
-                };
-                console.log('🌊 Using full lead waveform data with', leads.length, 'leads');
+            const directWaveform = this.getValueByPath(root, 'Waveform');
+            if (directWaveform && typeof directWaveform === 'object') {
+                if (directWaveform.Lead && Array.isArray(directWaveform.Lead)) {
+                    waveformData = this.processLeadArray(directWaveform.Lead);
+                } else if (typeof directWaveform === 'string') {
+                    waveformData = this.parseWaveformString(directWaveform);
+                }
             }
         }
         
-        // Fallback to any waveform
+        // If still no waveform, try to find any data in the structure
         if (!waveformData) {
-            const anyWaveform = this.getValueByPath(root, 'Waveform');
-            if (anyWaveform) {
-                waveformData = {
-                    LeadConfig: 'Standard 12-Lead',
-                    SampleRate: 500,
-                    Gain: 10,
-                    Lead: [
-                        {
-                            LeadID: 'II',
-                            Data: anyWaveform
-                        }
-                    ]
-                };
-                console.log('🌊 Using fallback waveform data');
+            waveformData = this.searchForWaveformData(root);
+        }
+        
+        // If we have waveform data but it's just a single lead, try to expand
+        if (waveformData && !waveformData.Lead && !waveformData.I && !waveformData.II) {
+            waveformData = this.expandToStandardLeads(waveformData);
+        }
+        
+        return waveformData;
+    }
+
+    processLeadArray(leadArray) {
+        if (!leadArray || !Array.isArray(leadArray)) return null;
+        
+        const processedLeads = [];
+        
+        for (const lead of leadArray) {
+            let leadData = null;
+            let leadId = null;
+            
+            // Extract lead ID
+            if (lead.LeadID) {
+                leadId = lead.LeadID;
+            } else if (lead.Lead) {
+                leadId = lead.Lead;
+            } else if (lead.Name) {
+                leadId = lead.Name;
+            }
+            
+            // Extract lead data
+            if (lead.Data) {
+                if (typeof lead.Data === 'string') {
+                    leadData = this.parseWaveformString(lead.Data);
+                } else if (Array.isArray(lead.Data)) {
+                    leadData = lead.Data;
+                }
+            } else if (lead.Waveform) {
+                if (typeof lead.Waveform === 'string') {
+                    leadData = this.parseWaveformString(lead.Waveform);
+                } else if (Array.isArray(lead.Waveform)) {
+                    leadData = lead.Waveform;
+                }
+            } else if (lead.Values) {
+                if (typeof lead.Values === 'string') {
+                    leadData = this.parseWaveformString(lead.Values);
+                } else if (Array.isArray(lead.Values)) {
+                    leadData = lead.Values;
+                }
+            }
+            
+            if (leadId && leadData && leadData.length > 0) {
+                processedLeads.push({
+                    LeadID: leadId,
+                    Data: leadData
+                });
             }
         }
         
-        if (!waveformData) {
-            console.log('⚠️ No waveform data found in GE file');
+        if (processedLeads.length > 0) {
+            return { Lead: processedLeads };
+        }
+        
+        return null;
+    }
+
+    parseWaveformString(waveformStr) {
+        if (!waveformStr || typeof waveformStr !== 'string') return null;
+        
+        try {
+            // Handle comma-separated values
+            if (waveformStr.includes(',')) {
+                return waveformStr.split(',').map(v => parseFloat(v.trim()));
+            }
+            // Handle space-separated values
+            else if (waveformStr.includes(' ')) {
+                return waveformStr.split(/\s+/).map(v => parseFloat(v.trim()));
+            }
+            // Try JSON parse
+            else {
+                const parsed = JSON.parse(waveformStr);
+                if (Array.isArray(parsed)) return parsed;
+                return null;
+            }
+        } catch (e) {
+            return null;
+        }
+    }
+
+    searchForWaveformData(obj, depth = 0) {
+        if (depth > 5) return null; // Prevent infinite recursion
+        
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const value = obj[key];
+                
+                // Look for lead-like structures
+                if (key === 'Lead' || key === 'Leads' || key === 'Waveform') {
+                    if (Array.isArray(value)) {
+                        const processed = this.processLeadArray(value);
+                        if (processed) return processed;
+                    }
+                }
+                
+                // Look for numeric arrays that might be waveform data
+                if (Array.isArray(value) && value.length > 100 && typeof value[0] === 'number') {
+                    return { Lead: [{ LeadID: 'II', Data: value }] };
+                }
+                
+                // Recursively search
+                if (typeof value === 'object' && value !== null) {
+                    const result = this.searchForWaveformData(value, depth + 1);
+                    if (result) return result;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    expandToStandardLeads(waveformData) {
+        // If we have a single lead but it's probably lead II, duplicate for display
+        if (waveformData && Array.isArray(waveformData)) {
+            return {
+                Lead: [
+                    { LeadID: 'I', Data: waveformData },
+                    { LeadID: 'II', Data: waveformData },
+                    { LeadID: 'III', Data: waveformData },
+                    { LeadID: 'aVR', Data: waveformData.map(v => -v) },
+                    { LeadID: 'aVL', Data: waveformData },
+                    { LeadID: 'aVF', Data: waveformData },
+                    { LeadID: 'V1', Data: waveformData },
+                    { LeadID: 'V2', Data: waveformData },
+                    { LeadID: 'V3', Data: waveformData },
+                    { LeadID: 'V4', Data: waveformData },
+                    { LeadID: 'V5', Data: waveformData },
+                    { LeadID: 'V6', Data: waveformData }
+                ]
+            };
+        }
+        
+        if (waveformData && typeof waveformData === 'object') {
+            if (!waveformData.Lead && !waveformData.I && !waveformData.II) {
+                // Assume the object itself is lead II
+                return {
+                    Lead: [{ LeadID: 'II', Data: Object.values(waveformData).filter(v => typeof v === 'number') }]
+                };
+            }
         }
         
         return waveformData;
     }
 
     extractRecordingTime(root) {
-        let recordingTime = null;
+        const recordingTime = this.getValueByPath(root, 'AcquisitionInfo.AcquisitionTime') ||
+                              this.getValueByPath(root, 'Recording.Time') ||
+                              new Date().toISOString();
         
-        // Try from AcquisitionInfo
-        if (root.AcquisitionInfo?.AcquisitionDateTime) {
-            recordingTime = this.formatDateTimeFromObject(root.AcquisitionInfo.AcquisitionDateTime);
-        }
-        
-        // Try from Recording
-        if (!recordingTime) {
-            recordingTime = this.getValueByPath(root, 'Recording.Time');
-        }
-        
-        // Try from header
-        if (!recordingTime && root.Header?.CreationDateTime) {
-            recordingTime = this.formatDateTimeFromObject(root.Header.CreationDateTime);
-        }
-        
-        if (!recordingTime) {
-            recordingTime = new Date().toISOString();
-            console.log('⚠️ No recording time found, using current time');
-        }
-        
-        console.log('⏰ GEParser recordingTime:', recordingTime);
         return recordingTime;
     }
 
     extractInterpretation(root) {
-        // Try to get interpretation from various possible locations
         let interpretation = root.Interpretation || root.Conclusion;
-        
         if (!interpretation) return null;
         
         const sections = [];
         
-        // Extract Statement/Summary
         if (interpretation.Statement) {
             sections.push({
                 title: 'SUMMARY',
@@ -243,30 +326,18 @@ class GEParser extends BaseXmlParser {
                 title: 'CONCLUSION',
                 content: interpretation.Text
             });
-        } else if (interpretation.Summary) {
-            sections.push({
-                title: 'SUMMARY',
-                content: interpretation.Summary
-            });
         }
         
-        // Extract Findings
         if (interpretation.Finding) {
             const findings = [];
-            
             if (Array.isArray(interpretation.Finding)) {
                 interpretation.Finding.forEach(finding => {
                     const desc = finding.Description || finding['#text'] || finding;
-                    if (desc && typeof desc === 'string') {
-                        findings.push(desc);
-                    }
+                    if (desc) findings.push(desc);
                 });
             } else if (interpretation.Finding.Description) {
                 findings.push(interpretation.Finding.Description);
-            } else if (typeof interpretation.Finding === 'string') {
-                findings.push(interpretation.Finding);
             }
-            
             if (findings.length > 0) {
                 sections.push({
                     title: 'FINDINGS',
@@ -275,7 +346,6 @@ class GEParser extends BaseXmlParser {
             }
         }
         
-        // Extract Impression
         if (interpretation.Impression) {
             sections.push({
                 title: 'IMPRESSION',
@@ -283,7 +353,6 @@ class GEParser extends BaseXmlParser {
             });
         }
         
-        // Extract Recommendations
         if (interpretation.Recommendations) {
             sections.push({
                 title: 'RECOMMENDATIONS',
@@ -291,12 +360,7 @@ class GEParser extends BaseXmlParser {
             });
         }
         
-        const formattedInterpretation = this.formatInterpretation(sections);
-        if (formattedInterpretation) {
-            console.log('📋 GEParser interpretation extracted');
-        }
-        
-        return formattedInterpretation;
+        return this.formatInterpretation(sections);
     }
 }
 

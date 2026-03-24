@@ -15,6 +15,7 @@ const crypto = require('crypto');
 const { initializeDatabase } = require('./database/init');
 const { DeviceWatcher } = require('./src/services/DeviceWatcher');
 const { ConfigureContainer } = require('./src/config/di/container');
+const { CardioSoftConnector } = require('./src/services/CardioSoftConnector');
 const { SyncService } = require('./src/services/SyncService');
 const { DeidentifiedSyncService } = require('./src/services/DeidentifiedSyncService');
 const { EncryptionService } = require('./src/services/EncryptionService');
@@ -37,14 +38,20 @@ const apiPatientRoutes = require('./src/routes/api/patientRoutes');
 const webRoutes = require('./src/routes/web/index');
 
 
-// Database path - Vercel compatible
-const DB_PATH = process.env.VERCEL === 1 ? '/tmp/offin.db' : (process.env.DB_PATH || './data/offin.db');
-const SESSIONS_PATH = process.env.VERCEL === 1 ? '/tmp' : './data';
+// At the top of the file, after require('dotenv').config()
+const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.RAILWAY_SERVICE_NAME;
+
+// Update database path
+const DB_PATH = isRailway ? '/app/data/offin.db' : (process.env.DB_PATH || './data/offin.db');
+const SESSIONS_PATH = isRailway ? '/app/data' : './data';
+
+// Update port - Railway provides PORT env variable
+const PORT = process.env.PORT || 8080;
 
 class OffinGateway {
     constructor() {
         this.app = express();
-        this.port = process.env.GATEWAY_PORT || 8080;
+        this.port = process.env.PORT || 8080;
         this.tenantId = process.env.TENANT_ID;
         this.syncInterval = parseInt(process.env.SYNC_INTERVAL) || 300000; // 5 minutes
         this.hospitalName = process.env.HOSPITAL_NAME || 'Healthcare Facility';
@@ -52,14 +59,23 @@ class OffinGateway {
         this.services = {};
         this.models = {};
         this.xmlParser = null;
-        this.isVercel = process.env.VERCEL === '1';
     }
 
     async initialize() {
         console.log('\n🚀 Medconnect Gateway initializing...');
         console.log('==========================================\n');
-        console.log(`🌍 Environment: ${this.isVercel ? 'Vercel (Production)' : 'Local Development'}`);
+        console.log(`🌍 Environment: ${this.isRailway ? 'Railway (Production)' : 'Local Development'}`);
         console.log(`📁 Database path: ${DB_PATH}\n`);
+
+        // Create data directory if it doesn't exist
+        const fs = require('fs').promises;
+        const dataDir = path.dirname(DB_PATH);
+        try {
+            await fs.mkdir(dataDir, { recursive: true });
+            console.log(`✅ Data directory created: ${dataDir}`);
+        } catch (err) {
+            console.log('Data directory already exists or cannot be created:', err.message);
+        }
 
         // 1. Validate required environment variables
         this.validateEnvironment();
@@ -82,19 +98,19 @@ class OffinGateway {
         console.log('✅ Encryption service ready\n');
 
 
-        // 3. Initialize database
+        // 3.1 Initialize database
         console.log('📀 Initializing local database...');
         const db = await initializeDatabase(DB_PATH);
         this.services.db = db;
 
-        // Initialize models
+        // 3.2 Initialize models
         this.models.patient = new LocalPatient(db);
         this.models.ecgRecord = new LocalEcgRecord(db);
         this.models.user = new LocalUser(db, this.services.encryption);
         this.models.syncQueue = new SyncQueue(db);
         this.models.hl7Message = new HL7Message(db);
 
-        // Initialize users table
+        // 3.3 Initialize users table
         await this.models.user.initialize();
         console.log('✅ Database ready\n');
 
@@ -102,19 +118,18 @@ class OffinGateway {
         await this.createDefaultAdmin();
 
         // 5. Initialize device watcher
-        if (!this.isVercel) {
+        // Configure DI container
+        const container = ConfigureContainer();
 
-            // Configure DI container
-            const container = ConfigureContainer();
+        // Resolve dependencies
+        console.log('👀 Initializing xml parser..');
+        this.xmlParser = container.resolve('configurableXmlParser');
+        console.log('👀 Setting default parser..');
+        // Set default parser for unknown formats
+        this.xmlParser.setDefaultParser('CardioSoft');
+        console.log('✅ xml parser ready\n');
 
-            // Resolve dependencies
-            console.log('👀 Initializing xml parser..');
-            this.xmlParser = container.resolve('configurableXmlParser');
-            console.log('👀 Setting default parser..');
-            // Set default parser for unknown formats
-           this.xmlParser.setDefaultParser('CardioSoft');
-           console.log('✅ xml parser ready\n');
-
+        if (!isRailway) {
             console.log('👀 Initializing device watcher...');
             this.services.deviceWatcher = new DeviceWatcher({
                 dropFolder: process.env.DROP_FOLDER || './drop-folder',
@@ -126,12 +141,61 @@ class OffinGateway {
                 xmlParser: this.xmlParser
             });
             console.log('✅ Device watcher ready\n');
-        } else {
-            console.log('⚠️ Device watcher disabled on Vercel (file system limitations)\n');
-            console.log('   For file processing, use the manual upload feature in the web interface\n');
         }
 
-        // 6. Initialize sync service
+        // 6. Initialize CardioSoft connector (if configured)
+        if (process.env.CARDIOSOFT_ENABLED === 'true') {
+            console.log('📊 Initializing CardioSoft connector...');
+
+            try {
+                const cardioSoftConfig = {
+                    type: process.env.CARDIOSOFT_DB_TYPE || 'mssql',
+                    host: process.env.CARDIOSOFT_DB_HOST,
+                    database: process.env.CARDIOSOFT_DB_NAME,
+                    username: process.env.CARDIOSOFT_DB_USER,
+                    password: process.env.CARDIOSOFT_DB_PASSWORD,
+                    filePath: process.env.CARDIOSOFT_DB_FILE,
+                    // Add connection timeout
+                    connectionTimeout: 30000,
+                    requestTimeout: 30000
+                };
+
+                console.log('CardioSoft config:', {
+                    type: cardioSoftConfig.type,
+                    host: cardioSoftConfig.host,
+                    database: cardioSoftConfig.database,
+                    hasUsername: !!cardioSoftConfig.username
+                });
+
+                this.services.cardioSoft = new CardioSoftConnector({
+                    dbConfig: cardioSoftConfig,
+                    encryption: this.services.encryption,
+                    models: this.models,
+                    telemetryEnabled: process.env.DEVICE_WATCHER_TELEMETRY_ENABLED === 'true'
+                });
+
+                // Start CardioSoft connector with error handling
+                const pollingInterval = parseInt(process.env.CARDIOSOFT_POLLING_INTERVAL) || 60000;
+
+                try {
+                    await this.services.cardioSoft.start(pollingInterval);
+                    console.log('✅ CardioSoft connector started successfully');
+                } catch (connError) {
+                    console.error('❌ Failed to start CardioSoft connector:', connError.message);
+                    console.log('⚠️ CardioSoft integration will be disabled. Set CARDIOSOFT_ENABLED=false to suppress this message.');
+                    // Disable CardioSoft
+                    this.services.cardioSoft = null;
+                }
+            } catch (error) {
+                console.error('❌ Failed to initialize CardioSoft connector:', error.message);
+                console.log('⚠️ CardioSoft integration will be disabled. Set CARDIOSOFT_ENABLED=false to suppress this message.');
+                this.services.cardioSoft = null;
+            }
+        } else {
+            console.log('📊 CardioSoft connector is disabled (CARDIOSOFT_ENABLED not set to true)');
+        }
+
+        // 7. Initialize sync service
         if (process.env.API_KEY && process.env.CLOUD_URL) {
             console.log('🔄 Initializing sync service...');
             this.services.sync = new SyncService({
@@ -147,8 +211,7 @@ class OffinGateway {
             console.log('⚠️ Sync service disabled (API_KEY or CLOUD_URL not set)\n');
         }
 
-        // 7. Initialize de-identified sync service (if telemetry enabled)
-        // 7. Initialize de-identified sync service (if telemetry enabled)
+        // 8. Initialize de-identified sync service (if telemetry enabled)
         if (process.env.TELEMETRY_ENABLED === 'true' && process.env.API_KEY) {
             console.log('📊 Initializing de-identified sync service...');
             this.services.deidentifiedSync = new DeidentifiedSyncService({
@@ -162,8 +225,8 @@ class OffinGateway {
             console.log('✅ De-identified Sync service ready\n');
         }
 
-        // 8. Initialize HL7 service (optional)
-        if (process.env.HL7_ENABLED === 'true' && !this.isVercel) {
+        // 9. Initialize HL7 service (optional)
+        if (process.env.HL7_ENABLED === 'true') {
             console.log('📡 Initializing HL7 service...');
             this.services.hl7 = new HL7Service({
                 port: parseInt(process.env.HL7_PORT) || 6661,
@@ -174,12 +237,12 @@ class OffinGateway {
             console.log('✅ HL7 service ready\n');
         }
 
-        // 9. Setup web server with Handlebars
+        // 10. Setup web server with Handlebars
         console.log('🌐 Setting up local web dashboard...');
         this.setupWebServer();
         console.log('✅ Web dashboard configured\n');
 
-        // 10. Initialize health check
+        // 11. Initialize health check
         console.log('💓 Initializing health monitoring...');
         this.services.health = new HealthCheck({
             services: this.services,
@@ -195,7 +258,7 @@ class OffinGateway {
         const required = ['ENCRYPTION_KEY', 'TENANT_ID'];
 
         // Only require API_KEY if not on Vercel or if sync will be used
-        if (!this.isVercel && process.env.API_KEY) {
+        if (process.env.API_KEY) {
             required.push('API_KEY');
         }
 
@@ -326,21 +389,20 @@ class OffinGateway {
         this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
         // Rate limiting for API
-        if (!this.isVercel) {
-            const apiLimiter = rateLimit({
-                windowMs: 15 * 60 * 1000, // 15 minutes
-                max: 100 // limit each IP to 100 requests per windowMs
-            });
-            this.app.use('/api/', apiLimiter);
+        const apiLimiter = rateLimit({
+            windowMs: 15 * 60 * 1000, // 15 minutes
+            max: 100 // limit each IP to 100 requests per windowMs
+        });
+        this.app.use('/api/', apiLimiter);
 
-            // Stricter rate limiting for auth endpoints
-            const authLimiter = rateLimit({
-                windowMs: 15 * 60 * 1000,
-                max: 5, // 5 attempts per 15 minutes
-                skipSuccessfulRequests: true
-            });
-            this.app.use('/api/local/auth/', authLimiter);
-        }
+        // Stricter rate limiting for auth endpoints
+        const authLimiter = rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 5, // 5 attempts per 15 minutes
+            skipSuccessfulRequests: true
+        });
+        this.app.use('/api/local/auth/', authLimiter);
+
 
         // Session configuration
         this.app.use(session({
@@ -352,7 +414,7 @@ class OffinGateway {
             resave: false,
             saveUninitialized: false,
             cookie: {
-                secure: process.env.NODE_ENV === 'production' && !this.isVercel,
+                secure: process.env.NODE_ENV === 'production' && !isRailway,
                 httpOnly: true,
                 maxAge: 24 * 60 * 60 * 1000, // 24 hours
                 sameSite: 'strict'
@@ -643,54 +705,6 @@ class OffinGateway {
         // ==================== API Routes ====================
         const apiRouter = express.Router();
 
-        this.app.get('/', (req, res) => {
-            res.send(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>OFFIN Healthcare Gateway</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        max-width: 800px;
-                        margin: 50px auto;
-                        padding: 20px;
-                        text-align: center;
-                    }
-                    h1 { color: #0A1929; }
-                    .status { color: #10B981; font-weight: bold; }
-                    .links { margin-top: 30px; }
-                    .links a {
-                        display: inline-block;
-                        margin: 10px;
-                        padding: 10px 20px;
-                        background: #0A1929;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 5px;
-                    }
-                    .links a:hover { background: #1E3A5F; }
-                </style>
-            </head>
-            <body>
-                <h1>🏥 OFFIN Healthcare Gateway</h1>
-                <p>Status: <span class="status">✅ Running</span></p>
-                <p>Environment: ${process.env.VERCEL ? 'Vercel (Production)' : 'Local Development'}</p>
-                <div class="links">
-                    <a href="/login">Login</a>
-                    <a href="/dashboard">Dashboard</a>
-                    <a href="/patients">Patients</a>
-                    <a href="/ecg">ECG Records</a>
-                    <a href="/health">Health Check</a>
-                </div>
-                <p style="margin-top: 40px; font-size: 12px; color: #666;">
-                    OFFIN Healthcare Gateway v1.0.0
-                </p>
-            </body>
-            </html>
-        `);
-        });
-
         // Auth routes (no authentication required)
         apiRouter.use('/auth', apiAuthRoutes(this.models, this.services));
 
@@ -788,6 +802,9 @@ class OffinGateway {
         await this.services.hl7?.stop();
         await this.services.health?.stop();
         await this.services.db?.close();
+        if (this.services.cardioSoft) {
+            await this.services.cardioSoft.stop();
+        }
 
         if (this.server) {
             this.server.close();
