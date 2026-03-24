@@ -3,7 +3,7 @@
 node_modules/
 .env
 .env.example
-.env.production
+.env.production 
 *.db
 *.db-journal
 data/
