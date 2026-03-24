@@ -1,0 +1,43 @@
+<!-- drop-folder/ecg_abnormal_002.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<ECGReport>
+    <PatientInfo>
+        <MRN>MRN-2024-004</MRN>
+        <FirstName>Jane</FirstName>
+        <LastName>Smith</LastName>
+        <DateOfBirth>1950-03-10</DateOfBirth>
+        <Gender>Female</Gender>
+    </PatientInfo>
+    
+    <DeviceInfo>
+        <DeviceID>ECG-MINDRAY-002</DeviceID>
+        <DeviceModel>BeneHeart R12</DeviceModel>
+    </DeviceInfo>
+    
+    <Recording>
+        <RecordingTime>2024-03-21T15:45:00Z</RecordingTime>
+        <Duration>10</Duration>
+    </Recording>
+    
+    <Measurements>
+        <HeartRate>45</HeartRate>
+        <PRInterval>200</PRInterval>
+        <QRSDuration>120</QRSDuration>
+        <QTInterval>480</QTInterval>
+        <QTCInterval>520</QTCInterval>
+    </Measurements>
+    
+    <WaveformData>
+        UE5HDQphCgAAAAAASUVORK5CYII=
+    </WaveformData>
+    
+    <Interpretation>
+        <Summary>Sinus bradycardia with prolonged QT interval</Summary>
+        <Details>
+            <Finding>Heart rate: 45 bpm - Bradycardia</Finding>
+            <Finding>Prolonged QTc: 520 ms</Finding>
+            <Finding>Left ventricular hypertrophy</Finding>
+        </Details>
+        <Recommendation>Cardiology consult recommended</Recommendation>
+    </Interpretation>
+</ECGReport>

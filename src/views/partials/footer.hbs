@@ -1,0 +1,150 @@
+{{! gateway/src/views/partials/footer.hbs }}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center">
+    <div class="copyright">
+        <small class="text-muted">
+            <i class="far fa-copyright me-1"></i>
+            {{year}} OFFIN Healthcare Limited. All rights reserved.
+        </small>
+    </div>
+    
+    <div class="version-info">
+        <small class="text-muted">
+            <i class="fas fa-code-branch me-1"></i>
+            Gateway v{{gatewayVersion}}
+            <span class="mx-2">|</span>
+            <i class="fas fa-clock me-1"></i>
+            Uptime: {{uptime}}
+            <span class="mx-2">|</span>
+            <i class="fas fa-database me-1"></i>
+            {{#if stats.ecgRecords.total}}{{stats.ecgRecords.total}}{{else}}0{{/if}} records
+        </small>
+    </div>
+    
+    <div class="footer-links">
+        <a href="#" class="text-muted text-decoration-none me-3" id="aboutLink">
+            <small><i class="fas fa-info-circle me-1"></i>About</small>
+        </a>
+        {{!-- <a href="/help" class="text-muted text-decoration-none me-3">
+            <small><i class="fas fa-question-circle me-1"></i>Help</small>
+        </a> --}}
+        <a href="#" class="text-muted text-decoration-none" id="supportLink">
+            <small><i class="fas fa-headset me-1"></i>Support</small>
+        </a>
+    </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0A1929 0%, #1A2B4A 100%);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-heartbeat me-2"></i>
+                    Medconnect Gateway
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-heartbeat fa-4x" style="color: #4A90E2;"></i>
+                </div>
+                <h5 class="text-center">Medconnect Gateway</h5>
+                <p class="text-center text-muted">Version {{gatewayVersion}}</p>
+                <hr>
+                <div class="small">
+                    <p><strong>Tenant ID:</strong> {{tenantId}}</p>
+                    <p><strong>Node Version:</strong> {{nodeVersion}}</p>
+                    <p><strong>Platform:</strong> {{platform}}</p>
+                    <p><strong>Uptime:</strong> {{uptime}}</p>
+                    <p><strong>Gateway ID:</strong> {{gatewayId}}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="https://offinhealthcare.com" target="_blank" class="btn btn-primary">Visit Website</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Support Modal -->
+<div class="modal fade" id="supportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #0A1929 0%, #1A2B4A 100%);">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-headset me-2"></i>
+                    Support
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-headset fa-4x" style="color: #4A90E2;"></i>
+                </div>
+                <h5 class="text-center">Need Help?</h5>
+                <p class="text-center text-muted">Our support team is here to assist you</p>
+                <hr>
+                <div class="mb-3">
+                    <i class="fas fa-envelope me-2 text-primary" style="width: 25px;"></i>
+                    <strong>Email:</strong>
+                    <a href="mailto:support@offinhealthcare.com" class="text-decoration-none ms-2">support@offinhealthcare.com</a>
+                </div>
+                <div class="mb-3">
+                    <i class="fas fa-phone-alt me-2 text-primary" style="width: 25px;"></i>
+                    <strong>Phone:</strong>
+                    <span class="ms-2">+233 (23) 536-4134</span>
+                </div>
+                <div class="mb-3">
+                    <i class="fas fa-clock me-2 text-primary" style="width: 25px;"></i>
+                    <strong>Hours:</strong>
+                    <span class="ms-2">Mon-Fri, 9am-6pm EST</span>
+                </div>
+                <div class="alert alert-info mt-3 mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Response time: within 24 hours
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="mailto:support@offinhealthcare.com" class="btn btn-primary">Send Email</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style nonce="{{nonce}}">
+.footer-links a:hover {
+    color: #4A90E2 !important;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: none;
+    border-radius: 0;
+}
+
+.modal-footer {
+    border-top: 1px solid #e5e7eb;
+}
+
+@media (max-width: 768px) {
+    .footer-links {
+        margin-top: 10px;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .version-info {
+        margin: 10px 0;
+        text-align: center;
+        width: 100%;
+    }
+}
+</style>

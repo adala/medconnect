@@ -1,0 +1,70 @@
+{{! views/ecg-upload.hbs }}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Upload ECG Record</h2>
+    <a href="/ecg" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Manual ECG Entry</h5>
+            </div>
+            <div class="card-body">
+                <form id="ecgUploadForm">
+                    <div class="mb-3">
+                        <label class="form-label">Patient <span class="text-danger">*</span></label>
+                        <select class="form-select" id="patientId" required>
+                            <option value="">Select Patient</option>
+                            {{#each patients}}
+                            <option value="{{this.id}}">{{this.first_name}} {{this.last_name}} ({{this.medical_record_number}})</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Recording Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" class="form-control" id="recordingTime" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Heart Rate (bpm)</label>
+                            <input type="number" class="form-control" id="heartRate" placeholder="60-100">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">PR Interval (ms)</label>
+                            <input type="number" class="form-control" id="prInterval" placeholder="120-200">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">QRS Duration (ms)</label>
+                            <input type="number" class="form-control" id="qrsDuration" placeholder="60-100">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">QT Interval (ms)</label>
+                            <input type="number" class="form-control" id="qtInterval" placeholder="350-450">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" rows="3" placeholder="Clinical notes, observations..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        For Mindray device uploads, place XML/PDF files in the drop folder. Manual entries will be synced to the cloud.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                        <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                        Save ECG Record
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

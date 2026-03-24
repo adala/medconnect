@@ -1,0 +1,510 @@
+{{! views/ecg-view.hbs }}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>ECG Record Details</h2>
+    <div>
+        <button class="btn btn-outline-secondary me-2" id="printBtn">
+            <i class="fas fa-print me-2"></i>Print
+        </button>
+        <a href="/patients/{{patient.id}}" class="btn btn-outline-primary" id="backToPatientBtn">
+            <i class="fas fa-arrow-left me-2"></i>Back to Patient
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Patient Info -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Patient Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <th>Name:</th>
+                        <td id="patientName">{{patient.first_name}} {{patient.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <th>MRN:</th>
+                        <td id="patientMRN">{{patient.medical_record_number}}</td>
+                    </tr>
+                    <tr>
+                        <th>DOB:</th>
+                        <td id="patientDOB">{{formatDate patient.date_of_birth}} ({{calculateAge patient.date_of_birth}} years)</td>
+                    </tr>
+                    <tr>
+                        <th>Gender:</th>
+                        <td id="patientGender">{{patient.gender}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ECG Metrics -->
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">ECG Measurements</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="metric-value h2" id="heartRate">{{record.heart_rate}}</div>
+                        <div class="metric-label">Heart Rate (bpm)</div>
+                        <small class="text-muted">Normal: 60-100</small>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-value h2" id="prInterval">{{record.pr_interval}}</div>
+                        <div class="metric-label">PR Interval (ms)</div>
+                        <small class="text-muted">Normal: 120-200</small>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-value h2" id="qrsDuration">{{record.qrs_duration}}</div>
+                        <div class="metric-label">QRS Duration (ms)</div>
+                        <small class="text-muted">Normal: 60-100</small>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-value h2" id="qtInterval">{{record.qt_interval}}</div>
+                        <div class="metric-label">QT Interval (ms)</div>
+                        <small class="text-muted">Normal: 350-450</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Interpretation Card -->
+{{#if record.interpretation}}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-file-alt me-2"></i>ECG Interpretation
+            {{#if record.vendor}}
+                <span class="badge bg-secondary ms-2" id="vendorBadge">{{record.vendor}}</span>
+            {{/if}}
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="interpretation-content">
+            {{#each (split record.interpretation "\n")}}
+                {{#if (startsWith this "SUMMARY:")}}
+                    <div class="interpretation-section summary">
+                        <h6><i class="fas fa-stethoscope me-2"></i>Summary</h6>
+                        <p class="lead">{{replace this "SUMMARY:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "DETAILS:")}}
+                    <div class="interpretation-section details">
+                        <h6><i class="fas fa-list me-2"></i>Details</h6>
+                        <ul class="mb-0">
+                {{else if (startsWith this "FINDINGS:")}}
+                    <div class="interpretation-section findings">
+                        <h6><i class="fas fa-search me-2"></i>Findings</h6>
+                        <ul class="mb-0">
+                {{else if (match this "^\\s*\\d+\\.")}}
+                    <li>{{this}}</li>
+                {{else if (startsWith this "CONCLUSION:")}}
+                        </ul>
+                    </div>
+                    <div class="interpretation-section conclusion">
+                        <h6><i class="fas fa-clipboard-check me-2"></i>Conclusion</h6>
+                        <p>{{replace this "CONCLUSION:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "DIAGNOSIS:")}}
+                    <div class="interpretation-section diagnosis">
+                        <h6><i class="fas fa-diagnoses me-2"></i>Diagnosis</h6>
+                        <p>{{replace this "DIAGNOSIS:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "IMPRESSION:")}}
+                    <div class="interpretation-section impression">
+                        <h6><i class="fas fa-chart-line me-2"></i>Impression</h6>
+                        <p>{{replace this "IMPRESSION:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "CLINICAL IMPRESSION:")}}
+                    <div class="interpretation-section impression">
+                        <h6><i class="fas fa-chart-line me-2"></i>Clinical Impression</h6>
+                        <p>{{replace this "CLINICAL IMPRESSION:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "RECOMMENDATIONS:")}}
+                    <div class="interpretation-section recommendations">
+                        <h6><i class="fas fa-notes-medical me-2"></i>Recommendations</h6>
+                        <p>{{replace this "RECOMMENDATIONS:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "RECOMMENDATION:")}}
+                    <div class="interpretation-section recommendations">
+                        <h6><i class="fas fa-notes-medical me-2"></i>Recommendation</h6>
+                        <p>{{replace this "RECOMMENDATION:" ""}}</p>
+                    </div>
+                {{else if (startsWith this "COMMENTS:")}}
+                    <div class="interpretation-section comments">
+                        <h6><i class="fas fa-comment me-2"></i>Comments</h6>
+                        <p>{{replace this "COMMENTS:" ""}}</p>
+                    </div>
+                {{else if (eq this "")}}
+                    {{#if (eq @index (firstIndexOf sections))}}
+                        {{! Do nothing }}
+                    {{else}}
+                        </ul>
+                    </div>
+                    {{/if}}
+                {{else if this}}
+                    <div class="interpretation-section default">
+                        <p>{{this}}</p>
+                    </div>
+                {{/if}}
+            {{/each}}
+        </div>
+        
+        <!-- Interpretation Metadata -->
+        <div class="interpretation-footer mt-3 pt-2 border-top">
+            <small class="text-muted">
+                <i class="fas fa-microchip me-1"></i>Vendor: <span id="vendorInfo">{{record.vendor}}</span> | 
+                <i class="fas fa-calendar-alt me-1 ms-2"></i>Recorded: <span id="recordingTimeInfo">{{formatDateTime record.recording_time}}</span>
+            </small>
+        </div>
+    </div>
+</div>
+{{else}}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-file-alt me-2"></i>ECG Interpretation
+        </h5>
+    </div>
+    <div class="card-body text-center py-5">
+        <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+        <p class="text-muted mb-0">No interpretation available for this ECG record.</p>
+        <small class="text-muted">This ECG was recorded with a {{record.vendor}} device</small>
+    </div>
+</div>
+{{/if}}
+
+<!-- Waveform Visualization -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">ECG Waveform</h5>
+    </div>
+    <div class="card-body">
+        <!-- Loading Indicator -->
+        <div id="waveformLoader" class="text-center py-5" style="display: none;">
+            <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+            <p>Loading waveform data...</p>
+        </div>
+        
+        <!-- Waveform Container -->
+        <div id="waveform-container" style="height: 400px; background: white; border: 1px solid #dee2e6; border-radius: 5px; position: relative;">
+            <canvas id="ecgCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+        </div>
+        
+        <!-- Controls -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <label class="form-label">Lead Selection</label>
+                <select class="form-select" id="leadSelect">
+                    <option value="I">Lead I</option>
+                    <option value="II" selected>Lead II</option>
+                    <option value="III">Lead III</option>
+                    <option value="aVR">aVR</option>
+                    <option value="aVL">aVL</option>
+                    <option value="aVF">aVF</option>
+                    <option value="V1">V1</option>
+                    <option value="V2">V2</option>
+                    <option value="V3">V3</option>
+                    <option value="V4">V4</option>
+                    <option value="V5">V5</option>
+                    <option value="V6">V6</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Zoom Level</label>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-sm btn-outline-secondary me-2" id="zoomOutBtn" title="Zoom Out (Ctrl+-)">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <input type="range" class="form-range flex-grow-1" id="zoomRange" min="0.5" max="4" step="0.1" value="1">
+                    <button class="btn btn-sm btn-outline-secondary ms-2" id="zoomInBtn" title="Zoom In (Ctrl++)">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <span class="ms-2" id="zoomValue" style="min-width: 45px;">1.0x</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Speed (mm/s)</label>
+                <select class="form-select" id="speedSelect">
+                    <option value="25">25 mm/s</option>
+                    <option value="50" selected>50 mm/s</option>
+                    <option value="100">100 mm/s</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div>
+                    <button class="btn btn-outline-secondary w-100" id="resetViewBtn">
+                        <i class="fas fa-undo-alt me-2"></i>Reset View
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Controls -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-outline-secondary" id="downloadImageBtn" title="Download as Image">
+                        <i class="fas fa-camera"></i> Image
+                    </button>
+                    <button class="btn btn-outline-secondary" id="fullscreenBtn" title="Fullscreen">
+                        <i class="fas fa-expand"></i> Fullscreen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Device Info -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Recording Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <strong>Device ID:</strong>
+                <p class="mb-0" id="deviceId"><code>{{record.device_id}}</code></p>
+            </div>
+            <div class="col-md-3">
+                <strong>Device Model:</strong>
+                <p class="mb-0" id="deviceModel">{{record.device_model}}</p>
+            </div>
+            <div class="col-md-3">
+                <strong>Recording Time:</strong>
+                <p class="mb-0" id="recordingTime">{{formatDateTime record.recording_time}}</p>
+            </div>
+            <div class="col-md-3">
+                <strong>Status:</strong>
+                <p class="mb-0" id="syncStatus">
+                    {{#if record.synced}}
+                        <span class="badge bg-success">Synced to Cloud</span>
+                    {{else}}
+                        <span class="badge bg-warning">Pending Sync</span>
+                    {{/if}}
+                </p>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <strong>File Hash:</strong>
+                <code class="small" id="fileHash">{{record.file_hash}}</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="d-flex justify-content-between mb-4">
+    <div>
+        <button class="btn btn-outline-success" id="exportPdfBtn">
+            <i class="fas fa-file-pdf me-2"></i>Export as PDF
+        </button>
+        <button class="btn btn-outline-info" id="exportJsonBtn">
+            <i class="fas fa-download me-2"></i>Export as JSON
+        </button>
+    </div>
+    <div>
+        <a href="/patients/{{patient.id}}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Patient
+        </a>
+    </div>
+</div>
+
+<style>
+.metric-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #0A1929;
+}
+
+.metric-value.text-success {
+    color: #28a745 !important;
+}
+
+.metric-value.text-warning {
+    color: #ffc107 !important;
+}
+
+.metric-value.text-danger {
+    color: #dc3545 !important;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#waveform-container {
+    overflow-x: auto;
+    position: relative;
+}
+
+#ecgCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: crosshair;
+}
+
+/* Interpretation Card Styles */
+.interpretation-section {
+    padding: 1rem;
+    border-left: 4px solid;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    transition: transform 0.2s ease;
+}
+
+.interpretation-section:hover {
+    transform: translateX(5px);
+}
+
+.interpretation-section.summary {
+    border-left-color: #28a745;
+    background-color: #f0f9f0;
+}
+
+.interpretation-section.summary p {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.interpretation-section.details,
+.interpretation-section.findings {
+    border-left-color: #17a2b8;
+}
+
+.interpretation-section.conclusion {
+    border-left-color: #6f42c1;
+}
+
+.interpretation-section.diagnosis {
+    border-left-color: #dc3545;
+}
+
+.interpretation-section.impression {
+    border-left-color: #ffc107;
+    background-color: #fff9e6;
+}
+
+.interpretation-section.recommendations {
+    border-left-color: #6c757d;
+}
+
+.interpretation-section.comments {
+    border-left-color: #6f42c1;
+}
+
+.interpretation-section.default {
+    border-left-color: #0d6efd;
+}
+
+.interpretation-section h6 {
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.interpretation-section p {
+    margin-bottom: 0;
+    line-height: 1.6;
+}
+
+.interpretation-section ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.interpretation-section li {
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+.interpretation-footer {
+    font-size: 0.75rem;
+}
+
+.interpretation-content .plain {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    color: #495057;
+}
+
+/* Print Styles */
+@media print {
+    .btn, 
+    .btn-group,
+    #printBtn,
+    #exportPdfBtn,
+    #exportJsonBtn,
+    .page-title-right,
+    .action-buttons {
+        display: none !important;
+    }
+    
+    .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    .interpretation-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    #waveform-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+/* Range Input Styling */
+.form-range {
+    height: 6px;
+}
+
+.form-range::-webkit-slider-thumb {
+    background: #0d6efd;
+}
+
+/* Button Group Spacing */
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .metric-value {
+        font-size: 1.5rem;
+    }
+    
+    .interpretation-section {
+        padding: 0.75rem;
+    }
+    
+    .interpretation-section h6 {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+<!-- External JavaScript -->
+<script src="/js/ecg.js"></script>

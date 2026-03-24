@@ -1,0 +1,58 @@
+<div class="text-center mb-4">
+    <span class="gateway-badge">
+        <i class="fas fa-shield-alt me-1"></i>
+        OFFIN Healthcare Gateway
+    </span>
+
+    <div class="hospital-name">{{hospitalName}}</div>
+    <div class="login-subtitle">Enter your credentials to access the local dashboard</div>
+</div>
+
+<form id="loginForm">
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email" placeholder="doctor@hospital.com" required
+                autofocus>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Password</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4 form-check">
+        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+        <label class="form-check-label" for="rememberMe">Remember me on this device</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100" id="loginBtn"
+        style="background: linear-gradient(135deg, #4A90E2 0%, #7EC8FF 100%); border: none; padding: 12px;">
+        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+        Sign In to Gateway
+    </button>
+</form>
+
+{{#unless cloudConnected}}
+<div class="alert alert-warning mt-3">
+    <i class="fas fa-wifi-slash me-2"></i>
+    Operating in offline mode. Cloud sync will resume when connection is restored.
+</div>
+{{/unless}}
+
+<div class="text-center mt-3">
+    <small class="text-muted">
+        <i class="fas fa-question-circle me-1"></i>
+        Need help? Contact your hospital administrator
+    </small>
+</div>
+
+<script src="/js/login.js"></script>

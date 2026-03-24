@@ -1,0 +1,30 @@
+# .vercelignore
+# Ignore the cloud directory (separate application)
+cloud/
+
+# Ignore development files
+.git/
+.github/
+.gitignore
+README.md
+docs/
+installer/
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore local data
+data/
+drop-folder/
+quarantine/
+
+# Ignore environment files
+.env
+.env.local
+.env.production
+
+# Ignore test files
+tests/
+*.test.js
+*.spec.js

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ECG xmlns="http://www.philips.com/ecg" version="2.0">
+  <Header>
+    <MessageType>ECG</MessageType>
+    <Version>2.0</Version>
+    <CreationDateTime>2024-03-21T14:30:00Z</CreationDateTime>
+    <Sender>
+      <DeviceID>PHILIPS-ECG-001</DeviceID>
+      <SoftwareVersion>IntelliSpace ECG 12.0</SoftwareVersion>
+    </Sender>
+  </Header>
+
+  <Patient>
+    <ID>P-10045</ID>
+    <MRN>PH-10045</MRN>
+    <FirstName>Robert</FirstName>
+    <LastName>Johnson</LastName>
+    <BirthDate>1965-03-15</BirthDate>
+    <Gender>Male</Gender>
+    <Age>59</Age>
+    <Height>178</Height>
+    <Weight>82</Weight>
+  </Patient>
+
+  <Study>
+    <StudyID>ECG-20240321-001</StudyID>
+    <StudyDateTime>2024-03-21T14:30:00Z</StudyDateTime>
+    <AcquisitionDateTime>2024-03-21T14:28:00Z</AcquisitionDateTime>
+    <ReasonForStudy>Routine checkup</ReasonForStudy>
+  </Study>
+
+  <Device>
+    <Model>PageWriter TC50</Model>
+    <SerialNumber>PWTC50-2024-001</SerialNumber>
+    <SoftwareVersion>3.0</SoftwareVersion>
+    <Manufacturer>Philips Medical Systems</Manufacturer>
+  </Device>
+
+  <Analysis>
+    <HeartRate>72</HeartRate>
+    <Intervals>
+      <PR>160</PR>
+      <QRS>98</QRS>
+      <QT>400</QT>
+      <QTc>420</QTc>
+      <RR>833</RR>
+    </Intervals>
+    <Axis>
+      <P>45</P>
+      <QRS>60</QRS>
+      <T>30</T>
+    </Axis>
+    <Diagnosis>
+      <Statement>Normal sinus rhythm</Statement>
+      <Code>R00.0</Code>
+    </Diagnosis>
+    <Interpretation>
+      <Text>Normal sinus rhythm with rate 72 bpm. Normal axis. Normal intervals. No significant
+        abnormalities.</Text>
+      <Findings>
+        <Finding>Heart rate: 72 bpm</Finding>
+        <Finding>Normal axis</Finding>
+        <Finding>Normal PR interval (160 ms)</Finding>
+        <Finding>Normal QRS duration (98 ms)</Finding>
+        <Finding>Normal QT interval (400 ms)</Finding>
+      </Findings>
+      <ClinicalImpression>Normal ECG</ClinicalImpression>
+      <Recommendation>Routine follow-up in 1 year</Recommendation>
+    </Interpretation>
+  </Analysis>
+
+  <Waveforms>
+    <SampleRate>500</SampleRate>
+    <Gain>10</Gain>
+    <Lead>
+      <LeadID>I</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>II</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>III</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVR</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVL</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVF</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V1</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V2</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V3</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3,0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V4</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.4,0.8,1.2,1.6,2.0,1.6,1.2,0.8,0.4,0.0,-0.4,-0.8,-1.2,-1.6,-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0,1.6,1.2,0.8,0.4,0.0,-0.4,-0.8,-1.2,-1.6,-2.0,-1.6,-1.2,-0.8,-0.4</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V5</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3,0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V6</LeadID>
+      <Unit>mV</Unit>
+      <Data>
+        0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+    </Lead>
+  </Waveforms>
+</ECG>

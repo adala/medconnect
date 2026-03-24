@@ -1,0 +1,134 @@
+{{! gateway/src/views/patient-edit.hbs }}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Edit Patient</h2>
+    <a href="/patients/{{patient.id}}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Patient
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Patient Information</h5>
+            </div>
+            <div class="card-body">
+                <form id="editPatientForm">
+                    <input type="hidden" id="patientId" value="{{patient.id}}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Medical Record Number</label>
+                        <input type="text" class="form-control" id="mrn" value="{{patient.medicalRecordNumber}}" readonly disabled>
+                        <small class="text-muted">MRN cannot be changed</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="firstName" value="{{patient.firstName}}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="lastName" value="{{patient.lastName}}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="dob" value="{{formatDate patient.dateOfBirth 'YYYY-MM-DD'}}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" id="gender">
+                                <option value="Male" {{#if (eq patient.gender 'Male')}}selected{{/if}}>Male</option>
+                                <option value="Female" {{#if (eq patient.gender 'Female')}}selected{{/if}}>Female</option>
+                                <option value="Other" {{#if (eq patient.gender 'Other')}}selected{{/if}}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="phone" value="{{patient.phone}}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{patient.email}}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="2">{{patient.address}}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="status">
+                            <option value="active" {{#if (eq patient.status 'active')}}selected{{/if}}>Active</option>
+                            <option value="inactive" {{#if (eq patient.status 'inactive')}}selected{{/if}}>Inactive</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="updateBtn">
+                        <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                        Update Patient
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('editPatientForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const patientId = document.getElementById('patientId').value;
+    const btn = document.getElementById('updateBtn');
+    const spinner = btn.querySelector('.spinner-border');
+    
+    btn.disabled = true;
+    spinner.classList.remove('d-none');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+    
+    const data = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        dateOfBirth: document.getElementById('dob').value,
+        gender: document.getElementById('gender').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        status: document.getElementById('status').value
+    };
+    
+    try {
+        const response = await fetch(`/api/local/patients/${patientId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            window.location.href = `/patients/${patientId}`;
+        } else {
+            alert('Error: ' + result.error);
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+            btn.innerHTML = 'Update Patient';
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+        btn.disabled = false;
+        spinner.classList.add('d-none');
+        btn.innerHTML = 'Update Patient';
+    }
+});
+</script>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="mindray.xsl"?>
+<ECGReport version="1.0" xmlns="http://www.mindray.com/ecg">
+  <Header>
+    <Version>1.0</Version>
+    <CreationDateTime>
+      <Year>2024</Year>
+      <Month>03</Month>
+      <Day>21</Day>
+      <Hour>14</Hour>
+      <Minute>30</Minute>
+      <Second>00</Second>
+    </CreationDateTime>
+    <Source>
+      <Device>Mindray ECG</Device>
+      <SoftwareVersion>V12.0</SoftwareVersion>
+    </Source>
+  </Header>
+
+  <PatientInfo>
+    <MRN>MR-10045</MRN>
+    <PatientID>P10045</PatientID>
+    <FirstName>Robert</FirstName>
+    <LastName>Johnson</LastName>
+    <DateOfBirth>1965-03-15</DateOfBirth>
+    <Gender>Male</Gender>
+    <Age>59</Age>
+    <Height>178</Height>
+    <Weight>82</Weight>
+    <BloodType>A+</BloodType>
+  </PatientInfo>
+
+  <DeviceInfo>
+    <DeviceID>MR-ECG-001</DeviceID>
+    <DeviceModel>BeneHeart R12</DeviceModel>
+    <Manufacturer>Mindray Medical</Manufacturer>
+    <SoftwareVersion>3.0.1</SoftwareVersion>
+    <FirmwareVersion>2.1.0</FirmwareVersion>
+    <SerialNumber>R12-2024-001</SerialNumber>
+  </DeviceInfo>
+
+  <Recording>
+    <RecordingTime>
+      <Year>2024</Year>
+      <Month>03</Month>
+      <Day>21</Day>
+      <Hour>14</Hour>
+      <Minute>30</Minute>
+      <Second>00</Second>
+    </RecordingTime>
+    <Duration>10</Duration>
+    <SampleRate>500</SampleRate>
+    <LeadSet>Standard 12-Lead</LeadSet>
+    <Filter>AC Filter: 50Hz, Muscle Filter: 35Hz</Filter>
+  </Recording>
+
+  <Measurements>
+    <HeartRate>72</HeartRate>
+    <PRInterval>160</PRInterval>
+    <QRSDuration>98</QRSDuration>
+    <QTInterval>400</QTInterval>
+    <QTCInterval>420</QTCInterval>
+    <RRInterval>833</RRInterval>
+    <PAxis>45</PAxis>
+    <QRSAxis>60</QRSAxis>
+    <TAxis>30</TAxis>
+    <RVAmp>1.2</RVAmp>
+    <SVAmp>0.8</SVAmp>
+    <RVAmpV5>1.5</RVAmpV5>
+    <SVAmpV1>1.0</SVAmpV1>
+    <STLevelV5>0.0</STLevelV5>
+    <STLevelV2>0.0</STLevelV2>
+  </Measurements>
+
+  <Interpretation>
+    <Summary>Normal sinus rhythm</Summary>
+    <Details>
+      <Finding>Heart rate: 72 bpm</Finding>
+      <Finding>Normal axis</Finding>
+      <Finding>Normal PR interval (160 ms)</Finding>
+      <Finding>Normal QRS duration (98 ms)</Finding>
+      <Finding>Normal QT interval (400 ms)</Finding>
+    </Details>
+    <Diagnosis>Normal ECG</Diagnosis>
+    <Recommendation>Routine follow-up in 1 year</Recommendation>
+    <Comments>ECG quality: Good. No artifacts detected.</Comments>
+    <Conclusion>Normal sinus rhythm. No significant abnormalities.</Conclusion>
+  </Interpretation>
+
+  <WaveformData>
+    <LeadConfig>12-Lead Standard</LeadConfig>
+    <SampleRate>500</SampleRate>
+    <Gain>10</Gain>
+    <Lead>
+      <LeadID>I</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>II</LeadID>
+      <Data>0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>III</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVR</LeadID>
+      <Data>0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVL</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVF</LeadID>
+      <Data>0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V1</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V2</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V3</LeadID>
+      <Data>0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V4</LeadID>
+      <Data>0,3,6,9,12,15,12,9,6,3,0,-3,-6,-9,-12,-15,-12,-9,-6,-3,0,3,6,9,12,15,12,9,6,3,0,-3,-6,-9,-12,-15,-12,-9,-6,-3</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V5</LeadID>
+      <Data>0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V6</LeadID>
+      <Data>0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+  </WaveformData>
+
+  <RhythmStrip>
+    <LeadID>II</LeadID>
+    <Duration>10</Duration>
+    <Data>0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+  </RhythmStrip>
+</ECGReport>

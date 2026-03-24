@@ -1,0 +1,93 @@
+{{! views/ecg.hbs }}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>ECG Records</h2>
+     <a href="/ecg/upload?patient={{patient.id}}" class="btn btn-sm btn-primary">
+            <i class="fas fa-upload me-1"></i>Upload ECG
+        </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <!-- Optional Search Bar -->
+        <div class="mb-3">
+            <input type="text" class="form-control" id="searchEcgInput" placeholder="Search by patient name or MRN..." style="max-width: 300px;">
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="ecgTable">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Patient</th>
+                        <th>Heart Rate</th>
+                        <th>PR Interval</th>
+                        <th>QRS Duration</th>
+                        <th>QT Interval</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each ecgRecords}}
+                    <tr data-ecg-id="{{this.id}}">
+                        <td>{{formatDateTime this.recording_time}}</td>
+                        <td>
+                            <a href="/patients/{{this.patient_id}}" class="text-decoration-none">
+                                {{#if this.first_name}}{{this.first_name}} {{/if}}{{#if this.last_name}}{{this.last_name}}{{else}}Unknown{{/if}}
+                            </a>
+                        </td>
+                        <td>{{#if this.heart_rate}}{{this.heart_rate}} bpm{{else}}-{{/if}}</td>
+                        <td>{{#if this.pr_interval}}{{this.pr_interval}} ms{{else}}-{{/if}}</td>
+                        <td>{{#if this.qrs_duration}}{{this.qrs_duration}} ms{{else}}-{{/if}}</td>
+                        <td>{{#if this.qt_interval}}{{this.qt_interval}} ms{{else}}-{{/if}}</td>
+                        <td>
+                            {{#if this.synced}}
+                                <span class="badge bg-success">Synced</span>
+                            {{else}}
+                                <span class="badge bg-warning">Pending</span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            <a href="/ecg/{{this.id}}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger delete-ecg-btn" data-ecg-id="{{this.id}}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="fas fa-heartbeat fa-3x mb-3 d-block"></i>
+                            No ECG records found
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        {{#if pagination.totalPages}}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {{#if (eq pagination.page 1)}}disabled{{/if}}">
+                    <a class="page-link" href="?page={{subtract pagination.page 1}}">Previous</a>
+                </li>
+                {{#each (range 1 pagination.totalPages)}}
+                <li class="page-item {{#if (eq this ../pagination.page)}}active{{/if}}">
+                    <a class="page-link" href="?page={{this}}">{{this}}</a>
+                </li>
+                {{/each}}
+                <li class="page-item {{#if (eq pagination.page pagination.totalPages)}}disabled{{/if}}">
+                    <a class="page-link" href="?page={{add pagination.page 1}}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        {{/if}}
+    </div>
+</div>
+
+<!-- External JavaScript -->
+<script src="/js/ecg.js"></script>

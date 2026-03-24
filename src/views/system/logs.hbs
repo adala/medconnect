@@ -1,0 +1,268 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>System Logs</h2>
+    <div>
+        <button class="btn btn-outline-primary me-2" onclick="refreshLogs()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh
+        </button>
+        <button class="btn btn-outline-secondary" onclick="downloadLogs()">
+            <i class="fas fa-download me-2"></i>Download
+        </button>
+    </div>
+</div>
+
+<!-- Log Controls -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Log Type</label>
+                <select class="form-select" id="logType">
+                    <option value="all">All Logs</option>
+                    <option value="system">System</option>
+                    <option value="sync">Sync</option>
+                    <option value="device">Device</option>
+                    <option value="hl7">HL7</option>
+                    <option value="auth">Authentication</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">Level</label>
+                <select class="form-select" id="logLevel">
+                    <option value="all">All Levels</option>
+                    <option value="error">Error</option>
+                    <option value="warn">Warning</option>
+                    <option value="info">Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">From Date</label>
+                <input type="datetime-local" class="form-control" id="fromDate">
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label">To Date</label>
+                <input type="datetime-local" class="form-control" id="toDate">
+            </div>
+            
+            <div class="col-12">
+                <button class="btn btn-primary" onclick="applyLogFilters()">
+                    <i class="fas fa-filter me-2"></i>Apply Filters
+                </button>
+                <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                    <i class="fas fa-times me-2"></i>Clear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Log Display -->
+<div class="card">
+    <div class="card-body">
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" class="form-control" id="logSearch" placeholder="Search logs...">
+            </div>
+        </div>
+        
+        <div class="log-container" style="height: 500px; overflow-y: auto; background: #0A1929; color: #fff; padding: 15px; border-radius: 5px; font-family: monospace;">
+            <div id="logEntries">
+                <!-- Log entries will be loaded here -->
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Loading logs...
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-3 d-flex justify-content-between align-items-center">
+            <div>
+                <span id="logCount">0</span> entries
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-secondary" onclick="loadMoreLogs()">
+                    Load More
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="clearLogs()">
+                    <i class="fas fa-trash me-2"></i>Clear Logs
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <script nonce="{{nonce}}">
+let currentPage = 1;
+let hasMore = true;
+let filters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadLogs();
+    
+    // Set default dates
+    const toDate = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - 1);
+    
+    document.getElementById('toDate').value = toDate.toISOString().slice(0, 16);
+    document.getElementById('fromDate').value = fromDate.toISOString().slice(0, 16);
+    
+    // Live search with debounce
+    let searchTimeout;
+    document.getElementById('logSearch').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            currentPage = 1;
+            document.getElementById('logEntries').innerHTML = '<div class="text-center text-muted py-5"><i class="fas fa-spinner fa-spin me-2"></i>Loading logs...</div>';
+            loadLogs();
+        }, 500);
+    });
+});
+
+async function loadLogs() {
+    try {
+        const params = new URLSearchParams({
+            page: currentPage,
+            type: document.getElementById('logType').value,
+            level: document.getElementById('logLevel').value,
+            from: document.getElementById('fromDate').value,
+            to: document.getElementById('toDate').value,
+            search: document.getElementById('logSearch').value
+        });
+        
+        const response = await fetch('/api/local/logs?' + params.toString());
+        const data = await response.json();
+        
+        if (data.success) {
+            displayLogs(data.logs);
+            document.getElementById('logCount').textContent = data.total;
+            hasMore = data.hasMore;
+        }
+    } catch (error) {
+        document.getElementById('logEntries').innerHTML = `
+            <div class="text-center text-danger py-5">
+                <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
+                <p>Failed to load logs: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+function displayLogs(logs) {
+    if (currentPage === 1) {
+        document.getElementById('logEntries').innerHTML = '';
+    }
+    
+    if (logs.length === 0) {
+        if (currentPage === 1) {
+            document.getElementById('logEntries').innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-info-circle fa-3x mb-3"></i>
+                    <p>No logs found</p>
+                </div>
+            `;
+        }
+        return;
+    }
+    
+    logs.forEach(log => {
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry mb-2 pb-2 border-bottom border-secondary';
+        
+        const levelClass = getLevelClass(log.level);
+        
+        logEntry.innerHTML = `
+            <div class="d-flex">
+                <span class="me-3 text-muted" style="min-width: 180px;">${new Date(log.timestamp).toLocaleString()}</span>
+                <span class="badge ${levelClass} me-3" style="min-width: 60px;">${log.level}</span>
+                <span class="text-${log.level === 'error' ? 'danger' : 'info'}">${log.message}</span>
+            </div>
+            ${log.details ? `<pre class="mt-2 text-muted" style="font-size: 0.85rem;">${JSON.stringify(log.details, null, 2)}</pre>` : ''}
+        `;
+        
+        document.getElementById('logEntries').appendChild(logEntry);
+    });
+}
+
+function getLevelClass(level) {
+    switch(level) {
+        case 'error': return 'bg-danger';
+        case 'warn': return 'bg-warning text-dark';
+        case 'info': return 'bg-info text-dark';
+        case 'debug': return 'bg-secondary';
+        default: return 'bg-secondary';
+    }
+}
+
+function applyLogFilters() {
+    currentPage = 1;
+    document.getElementById('logEntries').innerHTML = '<div class="text-center text-muted py-5"><i class="fas fa-spinner fa-spin me-2"></i>Loading logs...</div>';
+    loadLogs();
+}
+
+function clearFilters() {
+    document.getElementById('logType').value = 'all';
+    document.getElementById('logLevel').value = 'all';
+    
+    const toDate = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - 1);
+    
+    document.getElementById('toDate').value = toDate.toISOString().slice(0, 16);
+    document.getElementById('fromDate').value = fromDate.toISOString().slice(0, 16);
+    document.getElementById('logSearch').value = '';
+    
+    applyLogFilters();
+}
+
+function refreshLogs() {
+    currentPage = 1;
+    document.getElementById('logEntries').innerHTML = '<div class="text-center text-muted py-5"><i class="fas fa-spinner fa-spin me-2"></i>Loading logs...</div>';
+    loadLogs();
+}
+
+function loadMoreLogs() {
+    if (hasMore) {
+        currentPage++;
+        loadLogs();
+    }
+}
+
+async function downloadLogs() {
+    try {
+        const response = await fetch('/api/local/logs/export?' + new URLSearchParams({
+            type: document.getElementById('logType').value,
+            level: document.getElementById('logLevel').value,
+            from: document.getElementById('fromDate').value,
+            to: document.getElementById('toDate').value
+        }));
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gateway-logs-${new Date().toISOString()}.log`;
+        a.click();
+    } catch (error) {
+        alert('Failed to download logs: ' + error.message);
+    }
+}
+
+async function clearLogs() {
+    if (!confirm('Are you sure you want to clear all logs? This action cannot be undone.')) return;
+    
+    try {
+        const response = await fetch('/api/local/logs', { method: 'DELETE' });
+        const data = await response.json();
+        
+        if (data.success) {
+            refreshLogs();
+        }
+    } catch (error) {
+        alert('Failed to clear logs: ' + error.message);
+    }
+}
+</script>

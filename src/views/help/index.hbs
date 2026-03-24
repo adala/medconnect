@@ -1,0 +1,166 @@
+{{! gateway/src/views/help/index.hbs }}
+
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <i class="fas fa-question-circle fa-4x mb-3" style="color: #4A90E2;"></i>
+        <h1 class="display-5 fw-bold">Help & Support</h1>
+        <p class="lead text-muted">Quick answers and support resources for your gateway</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Quick Guide -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-book me-2" style="color: #4A90E2;"></i>Quick Guide</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-chevron-right me-2 text-primary"></i>
+                            <strong>Add Patients:</strong> Use the "Add Patient" button in the header to create new
+                            patient records.
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-chevron-right me-2 text-primary"></i>
+                            <strong>Upload ECG:</strong> Place Mindray ECG files in the drop folder. Files are
+                            automatically processed.
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-chevron-right me-2 text-primary"></i>
+                            <strong>Sync to Cloud:</strong> Data syncs automatically every 5 minutes. Use "Force Sync"
+                            for immediate sync.
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-chevron-right me-2 text-primary"></i>
+                            <strong>View Records:</strong> Browse patient records and ECG waveforms from the dashboard.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Contacts -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-headset me-2" style="color: #4A90E2;"></i>Support Contacts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-envelope me-2 text-primary" style="width: 25px;"></i>
+                        <strong>Email Support:</strong>
+                        <a href="mailto:support@offinhealthcare.com"
+                            class="text-decoration-none ms-2">support@offinhealthcare.com</a>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-phone-alt me-2 text-primary" style="width: 25px;"></i>
+                        <strong>Phone Support:</strong>
+                        <span class="ms-2">+1 (800) 555-0123</span>
+                    </div>
+                    <div class="mb-3">
+                        <i class="fas fa-clock me-2 text-primary" style="width: 25px;"></i>
+                        <strong>Hours:</strong>
+                        <span class="ms-2">Mon-Fri, 9am-6pm EST</span>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-muted">Response time: within 24 hours</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-question-circle me-2" style="color: #4A90E2;"></i>Frequently Asked
+                        Questions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-2">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button bg-light rounded" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How do I connect Mindray devices?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Configure your Mindray device to export ECG files to the drop folder location shown
+                                    in Settings. Files are automatically detected and processed.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-2">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-light rounded" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    What happens when internet is down?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    The gateway continues to work locally. Data is stored locally and automatically
+                                    syncs to the cloud when connection is restored.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-2">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-light rounded" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    How do I update the gateway?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    The gateway automatically checks for updates. Updates are applied automatically when
+                                    available. You can also manually update by restarting the Docker container.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Info -->
+    <div class="mt-4 p-3 bg-light rounded text-center">
+        <small class="text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            Gateway Version: {{gatewayVersion}} |
+            Tenant: {{tenantId}} |
+            Uptime: {{uptime}}
+        </small>
+    </div>
+</div>
+
+<style nonce="{{nonce}}">
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 15px 20px;
+    }
+
+    .accordion-button {
+        box-shadow: none;
+        font-weight: 500;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: #f0f9ff;
+        color: #4A90E2;
+    }
+</style>

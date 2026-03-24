@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="cardiosoft.xsl"?>
+<CardiologyXML version="1.0" xmlns="http://www.cardiosoft.com/ecg">
+    <PatientInfo>
+        <PID>CS-10045</PID>
+        <MRN>CS-10045</MRN>
+        <Name>
+            <FamilyName>Johnson</FamilyName>
+            <GivenName>Robert</GivenName>
+            <MiddleName>William</MiddleName>
+        </Name>
+        <BirthDateTime>
+            <Year>1965</Year>
+            <Month>03</Month>
+            <Day>15</Day>
+            <Hour>0</Hour>
+            <Minute>0</Minute>
+            <Second>0</Second>
+        </BirthDateTime>
+        <Gender>Male</Gender>
+        <Age>59</Age>
+        <Height>178</Height>
+        <Weight>82</Weight>
+        <Race>Caucasian</Race>
+        <Ethnicity>Not Hispanic</Ethnicity>
+    </PatientInfo>
+
+    <StudyInfo>
+        <StudyID>CS-20240321-001</StudyID>
+        <StudyDateTime>
+            <Year>2024</Year>
+            <Month>03</Month>
+            <Day>21</Day>
+            <Hour>14</Hour>
+            <Minute>30</Minute>
+            <Second>0</Second>
+        </StudyDateTime>
+        <StudyType>Resting ECG</StudyType>
+        <ReasonForStudy>Routine examination</ReasonForStudy>
+        <Location>Cardiology Department</Location>
+    </StudyInfo>
+
+    <ClinicalInfo>
+        <DeviceInfo>
+            <ID>CS-DEV-001</ID>
+            <Desc>CardioSoft ECG System</Desc>
+            <SoftwareVer>6.0</SoftwareVer>
+            <AnalysisVer>2.5</AnalysisVer>
+            <Manufacturer>CardioSoft</Manufacturer>
+        </DeviceInfo>
+        <Technician>
+            <ID>TC001</ID>
+            <Name>John Smith</Name>
+        </Technician>
+    </ClinicalInfo>
+
+    <RestingECG>
+        <Acquisition>
+            <SampleRate>500</SampleRate>
+            <Gain>10</Gain>
+            <Filter>0.05-150 Hz</Filter>
+            <Duration>10</Duration>
+        </Acquisition>
+        <Measurements>
+            <HeartRate>72</HeartRate>
+            <PRInterval>160</PRInterval>
+            <QRSDuration>98</QRSDuration>
+            <QTInterval>400</QTInterval>
+            <QTCInterval>420</QTCInterval>
+            <PAxis>45</PAxis>
+            <QRSAxis>60</QRSAxis>
+            <TAxis>30</TAxis>
+            <RRAverage>833</RRAverage>
+        </Measurements>
+    </RestingECG>
+
+    <ExerciseMeasurements>
+        <RestingStats>
+            <RestHR>72</RestHR>
+            <RestSystolicBP>120</RestSystolicBP>
+            <RestDiastolicBP>80</RestDiastolicBP>
+        </RestingStats>
+        <PeakExHR>165</PeakExHR>
+        <MaxHeartRate>185</MaxHeartRate>
+        <MaxWorkload>10.5</MaxWorkload>
+        <ExercisePhaseTime>480</ExercisePhaseTime>
+        <RecoveryHR>85</RecoveryHR>
+    </ExerciseMeasurements>
+
+    <Interpretation>
+        <Summary>Normal sinus rhythm</Summary>
+        <Details>
+            <Finding>Heart rate: 72 bpm</Finding>
+            <Finding>Normal axis</Finding>
+            <Finding>Normal PR interval (160 ms)</Finding>
+            <Finding>Normal QRS duration (98 ms)</Finding>
+            <Finding>Normal QT interval (400 ms)</Finding>
+        </Details>
+        <Conclusion>No significant abnormalities detected. Normal ECG.</Conclusion>
+        <Recommendations>Routine follow-up in 1 year. No further testing required.</Recommendations>
+        <Comments>Patient reports no symptoms. ECG quality good.</Comments>
+        <ReviewedBy>
+            <Name>Dr. Sarah Williams</Name>
+            <Date>2024-03-21</Date>
+        </ReviewedBy>
+    </Interpretation>
+
+    <WaveformData>
+        <LeadConfig>Standard 12-Lead</LeadConfig>
+        <SampleRate>500</SampleRate>
+        <Gain>10</Gain>
+        <Lead>
+            <LeadID>I</LeadID>
+            <Data>
+                0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+        </Lead>
+        <Lead>
+            <LeadID>II</LeadID>
+            <Data>
+                0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+        </Lead>
+        <Lead>
+            <LeadID>III</LeadID>
+            <Data>
+                0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+        </Lead>
+        <Lead>
+            <LeadID>aVR</LeadID>
+            <Data>
+                0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1</Data>
+        </Lead>
+        <Lead>
+            <LeadID>aVL</LeadID>
+            <Data>
+                0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+        </Lead>
+        <Lead>
+            <LeadID>aVF</LeadID>
+            <Data>
+                0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V1</LeadID>
+            <Data>
+                0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.4,0.3,0.2,0.1,0.0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.4,-0.3,-0.2,-0.1</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V2</LeadID>
+            <Data>
+                0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V3</LeadID>
+            <Data>
+                0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3,0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V4</LeadID>
+            <Data>
+                0.0,0.4,0.8,1.2,1.6,2.0,1.6,1.2,0.8,0.4,0.0,-0.4,-0.8,-1.2,-1.6,-2.0,-1.6,-1.2,-0.8,-0.4,0.0,0.4,0.8,1.2,1.6,2.0,1.6,1.2,0.8,0.4,0.0,-0.4,-0.8,-1.2,-1.6,-2.0,-1.6,-1.2,-0.8,-0.4</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V5</LeadID>
+            <Data>
+                0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3,0.0,0.3,0.6,0.9,1.2,1.5,1.2,0.9,0.6,0.3,0.0,-0.3,-0.6,-0.9,-1.2,-1.5,-1.2,-0.9,-0.6,-0.3</Data>
+        </Lead>
+        <Lead>
+            <LeadID>V6</LeadID>
+            <Data>
+                0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</Data>
+        </Lead>
+    </WaveformData>
+
+    <MedianData>
+        <Median>
+            <BeatType>Normal</BeatType>
+            <WaveformData>
+                0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2,0.0,0.2,0.4,0.6,0.8,1.0,0.8,0.6,0.4,0.2,0.0,-0.2,-0.4,-0.6,-0.8,-1.0,-0.8,-0.6,-0.4,-0.2</WaveformData>
+        </Median>
+    </MedianData>
+
+    <TrendData>
+        <TrendEntry>
+            <Time>0</Time>
+            <HeartRate>72</HeartRate>
+            <STLevel>0.0</STLevel>
+        </TrendEntry>
+        <TrendEntry>
+            <Time>60</Time>
+            <HeartRate>78</HeartRate>
+            <STLevel>0.1</STLevel>
+        </TrendEntry>
+        <TrendEntry>
+            <Time>120</Time>
+            <HeartRate>85</HeartRate>
+            <STLevel>0.1</STLevel>
+        </TrendEntry>
+    </TrendData>
+</CardiologyXML>

@@ -1,0 +1,28 @@
+<div class="error-code">{{error.code}}</div>
+<div class="error-title">{{error.title}}</div>
+<div class="error-message">{{error.message}}</div>
+
+{{#if error.details}}
+<pre class="text-white-50 bg-dark p-3 rounded text-start">{{error.details}}</pre>
+{{/if}}
+
+<a href="/" class="btn-home">
+    <i class="fas fa-home me-2"></i>
+    Return to Dashboard
+</a>
+
+{{#if user}}
+<button class="btn-home ms-2" onclick="history.back()" style="background: transparent; color: white; border: 2px solid white;">
+    <i class="fas fa-arrow-left me-2"></i>
+    Go Back
+</button>
+{{/if}}
+
+<style>
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+}
+</style>

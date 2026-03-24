@@ -1,0 +1,152 @@
+{{! In users.hbs - Remove inline onclick handlers }}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>User Management</h2>
+    <button class="btn btn-primary" id="addUserBtn">
+        <i class="fas fa-user-plus me-2"></i>Add User
+    </button>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                    <tr data-user-id="{{this.id}}">
+                        <td>{{this.first_name}} {{this.last_name}}</td>
+                        <td>{{this.email}}</td>
+                        <td>
+                            <span class="badge bg-info">{{this.role}}</span>
+                        </td>
+                        <td>
+                            {{#if this.is_locked}}
+                                <span class="badge bg-danger">Locked</span>
+                            {{else if this.is_active}}
+                                <span class="badge bg-success">Active</span>
+                            {{else}}
+                                <span class="badge bg-secondary">Inactive</span>
+                            {{/if}}
+                        </td>
+                        <td>{{formatDateTime this.last_login}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary edit-user-btn" data-user-id="{{this.id}}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            {{#if this.is_locked}}
+                            <button class="btn btn-sm btn-outline-success unlock-user-btn" data-user-id="{{this.id}}">
+                                <i class="fas fa-unlock"></i>
+                            </button>
+                            {{/if}}
+                            <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="{{this.id}}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No users found</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {{#if pagination.totalPages}}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {{#if (eq pagination.page 1)}}disabled{{/if}}">
+                    <a class="page-link" href="?page={{subtract pagination.page 1}}">Previous</a>
+                </li>
+                {{#each (range 1 pagination.totalPages)}}
+                <li class="page-item {{#if (eq this ../pagination.page)}}active{{/if}}">
+                    <a class="page-link" href="?page={{this}}">{{this}}</a>
+                </li>
+                {{/each}}
+                <li class="page-item {{#if (eq pagination.page pagination.totalPages)}}disabled{{/if}}">
+                    <a class="page-link" href="?page={{add pagination.page 1}}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        {{/if}}
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalTitle">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="userId">
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" id="role" required>
+                            <option value="clinician">Clinician</option>
+                            <option value="technician">Technician</option>
+                            <option value="admin">Administrator</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3" id="passwordField">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password">
+                        <small class="text-muted">Leave blank to keep current password when editing</small>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="requirePasswordChange">
+                        <label class="form-check-label" for="requirePasswordChange">
+                            Require password change on next login
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isActive" checked>
+                        <label class="form-check-label" for="isActive">Active</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveUserBtn">Save User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/users.js"></script>

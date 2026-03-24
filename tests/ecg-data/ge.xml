@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="muse.xsl"?>
+<MuseXML version="1.0" xmlns="http://www.ge.com/ecg/muse">
+  <Header>
+    <Version>MUSE XML 2.0</Version>
+    <CreationDateTime>
+      <Year>2024</Year>
+      <Month>03</Month>
+      <Day>21</Day>
+      <Hour>14</Hour>
+      <Minute>30</Minute>
+      <Second>00</Second>
+    </CreationDateTime>
+    <Software>
+      <Name>MUSE Cardiology Information System</Name>
+      <Version>8.0</Version>
+    </Software>
+  </Header>
+
+  <PatientDemographics>
+    <MRN>GE-10045</MRN>
+    <FirstName>Robert</FirstName>
+    <LastName>Johnson</LastName>
+    <DOB>1965-03-15</DOB>
+    <Gender>Male</Gender>
+    <Age>59</Age>
+    <Height>178</Height>
+    <Weight>82</Weight>
+    <Race>Caucasian</Race>
+    <PatientID>P10045</PatientID>
+  </PatientDemographics>
+
+  <AcquisitionInfo>
+    <DeviceID>MUSE-2024-001</DeviceID>
+    <DeviceModel>MAC 5500</DeviceModel>
+    <SoftwareVersion>11.0</SoftwareVersion>
+    <Site>Cardiology Department</Site>
+    <AcquisitionDateTime>
+      <Year>2024</Year>
+      <Month>03</Month>
+      <Day>21</Day>
+      <Hour>14</Hour>
+      <Minute>30</Minute>
+      <Second>00</Second>
+    </AcquisitionDateTime>
+    <Technician>JS001</Technician>
+  </AcquisitionInfo>
+
+  <RestingECG>
+    <HeartRate>72</HeartRate>
+    <PRInterval>160</PRInterval>
+    <QRSDuration>98</QRSDuration>
+    <QTInterval>400</QTInterval>
+    <QTCInterval>420</QTCInterval>
+    <PAxis>45</PAxis>
+    <QRSAxis>60</QRSAxis>
+    <TAxis>30</TAxis>
+    <Interpretation>
+      <Statement>Normal sinus rhythm</Statement>
+      <Finding>
+        <Description>Heart rate: 72 bpm</Description>
+        <Description>Normal axis</Description>
+        <Description>Normal PR interval</Description>
+        <Description>Normal QRS duration</Description>
+        <Description>Normal QT interval</Description>
+      </Finding>
+      <Impression>Normal ECG</Impression>
+      <Recommendations>No further action needed</Recommendations>
+    </Interpretation>
+  </RestingECG>
+
+  <WaveformData>
+    <SampleRate>500</SampleRate>
+    <Gain>10</Gain>
+    <Lead>
+      <LeadID>I</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>II</LeadID>
+      <Data>
+        0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>III</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVR</LeadID>
+      <Data>
+        0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVL</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>aVF</LeadID>
+      <Data>
+        0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2,0,2,4,6,8,10,8,6,4,2,0,-2,-4,-6,-8,-10,-8,-6,-4,-2</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V1</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V2</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V3</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V4</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V5</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+    <Lead>
+      <LeadID>V6</LeadID>
+      <Data>
+        0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1,0,1,2,3,4,5,4,3,2,1,0,-1,-2,-3,-4,-5,-4,-3,-2,-1</Data>
+    </Lead>
+  </WaveformData>
+
+  <Measurements>
+    <VentricularRate>72</VentricularRate>
+    <PRInterval>160</PRInterval>
+    <QRSDuration>98</QRSDuration>
+    <QTInterval>400</QTInterval>
+    <QTCInterval>420</QTCInterval>
+    <QRSAxis>60</QRSAxis>
+    <TAxis>30</TAxis>
+  </Measurements>
+</MuseXML>

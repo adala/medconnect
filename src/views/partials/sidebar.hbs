@@ -1,0 +1,186 @@
+{{! gateway/src/views/partials/sidebar.hbs }}
+
+<div class="sidebar-content">
+    <!-- Logo Section -->
+    <div class="text-center mb-4 px-3">
+        <div class="logo-wrapper mb-3">
+            <img class="d-block mx-auto mb-4" src="/img/favicon.png" alt="Medconnect" height="50">
+            <h5 class="mt-2 mb-0 text-white">Medconnect Gateway</h5>
+            <small class="text-white-50">{{#if hospitalName}}{{hospitalName}}{{else}}Healthcare{{/if}}</small>
+        </div>
+    </div>
+
+    <!-- User Profile -->
+    <div class="user-profile mb-4 px-3 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div class="d-flex align-items-center">
+            <div class="user-avatar"
+                style="width: 45px; height: 45px; background: linear-gradient(135deg, #5ED9C9 0%, #4CB3A5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <span class="text-white fw-bold fs-5" id="userInitial">
+                    {{#if user}}
+                        {{#if user.first_name}}{{firstLetter user.first_name}}{{/if}}
+                        {{#if user.last_name}}{{firstLetter user.last_name}}{{/if}}
+                    {{else}}
+                        G
+                    {{/if}}
+                </span>
+            </div>
+            <div class="ms-3">
+                <div class="text-white fw-semibold" id="userName">
+                    {{#if user}}
+                        {{#if user.first_name}}{{user.first_name}} {{/if}}{{#if user.last_name}}{{user.last_name}}{{/if}}
+                    {{else}}
+                        Gateway User
+                    {{/if}}
+                </div>
+                <div class="text-white-50 small" id="userRole">
+                    {{#if user}}{{#if user.role}}{{user.role}}{{else}}user{{/if}}{{else}}Local Access{{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu flex-grow-1">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'dashboard')}}active{{/if}}" href="/">
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            {{#if (hasPermission user 'manage_users')}}
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'users')}}active{{/if}}" href="/users">
+                    <i class="fas fa-user-cog me-3"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+            {{/if}}
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'patients')}}active{{/if}}" href="/patients">
+                    <i class="fas fa-users me-3"></i>
+                    <span>Patients</span>
+                    {{#if stats.patients}}
+                    <span class="badge bg-info ms-auto">{{stats.patients}}</span>
+                    {{/if}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'ecg')}}active{{/if}}" href="/ecg">
+                    <i class="fas fa-heartbeat me-3"></i>
+                    <span>ECG Records</span>
+                    {{#if stats.ecgRecords.pending}}
+                    <span class="badge bg-warning ms-auto">{{stats.ecgRecords.pending}}</span>
+                    {{/if}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'settings')}}active{{/if}}" href="/settings">
+                    <i class="fas fa-cog me-3"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'logs')}}active{{/if}}" href="/logs">
+                    <i class="fas fa-history me-3"></i>
+                    <span>System Logs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'help')}}active{{/if}}" href="/help">
+                    <i class="fas fa-question-circle me-3"></i>
+                    <span>Help & Support</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{#if (eq active 'about')}}active{{/if}}" href="/about">
+                    <i class="fas fa-info-circle me-3"></i>
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- System Status -->
+    <div class="system-status mt-auto pt-3 px-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="d-flex justify-content-between small mb-2">
+            <span class="text-white-50">
+                <i class="fas fa-circle me-1"
+                    style="color: {{#if syncStatus.isConnected}}#10B981{{else}}#EF4444{{/if}}; font-size: 8px;"></i>
+                {{#if syncStatus.isConnected}}Cloud Connected{{else}}Offline{{/if}}
+            </span>
+            <span class="text-white-50">
+                <i class="fas fa-database me-1"></i>
+                {{#if stats.ecgRecords.total}}{{stats.ecgRecords.total}}{{else}}0{{/if}} records
+            </span>
+        </div>
+        <div class="progress mb-2" style="height: 4px;">
+            <div class="progress-bar bg-info" role="progressbar"
+                style="width: {{#if health.storage.data.usedPercent}}{{health.storage.data.usedPercent}}{{else}}0{{/if}}%">
+            </div>
+        </div>
+        <div class="d-flex justify-content-between small">
+            <span class="text-white-50">Storage</span>
+            <span class="text-white-50">
+                {{#if health.storage.data.used}}{{health.storage.data.used}}{{else}}0{{/if}} /
+                {{#if health.storage.data.total}}{{health.storage.data.total}}{{else}}0{{/if}}
+            </span>
+        </div>
+
+        <!-- Logout Button -->
+        <button class="btn btn-outline-light w-100 mt-3" id="sidebarLogoutBtn">
+            <i class="fas fa-sign-out-alt me-2"></i>Logout
+        </button>
+    </div>
+</div>
+
+<style nonce="{{nonce}}">
+    .sidebar-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-menu .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        padding: 10px 16px;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 2px 8px;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-menu .nav-link i {
+        width: 24px;
+        color: #7EC8FF;
+    }
+
+    .nav-menu .nav-link:hover {
+        background: rgba(126, 200, 255, 0.1);
+        color: white;
+    }
+
+    .nav-menu .nav-link.active {
+        background: rgba(74, 144, 226, 0.2);
+        color: white;
+        border-left: 3px solid #7EC8FF;
+    }
+
+    .nav-menu .nav-link.active i {
+        color: white;
+    }
+
+    .btn-outline-light {
+        border-color: rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+
+    .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+</style>
+
+<!-- External JavaScript for sidebar functionality -->
+<script src="/js/sidebar.js"></script>

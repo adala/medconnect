@@ -1,0 +1,94 @@
+{
+  "name": "mc_gateway_ugmc",
+  "version": "1.0.0",
+  "description": "Medconnect - OFFIN Healthcare Medical Data Analysis System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "vercel-build": "npm install --production=false",
+    "build": "echo 'Building for production...'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/offinhealthcare/gateway"
+  },
+  "keywords": [
+    "healthcare",
+    "ecg",
+    "mindray",
+    "hl7",
+    "hipaa",
+    "gateway"
+  ],
+  "author": "OFFIN Healthcare Limited",
+  "license": "ISC",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/sax": "^1.2.7",
+    "awilix": "^13.0.3",
+    "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
+    "chokidar": "^3.6.0",
+    "compression": "^1.8.1",
+    "connect-sqlite3": "^0.9.16",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^17.3.1",
+    "events": "^3.3.0",
+    "express": "^5.2.1",
+    "express-basic-auth": "^1.2.1",
+    "express-handlebars": "^8.0.6",
+    "express-rate-limit": "^8.3.1",
+    "express-session": "^1.19.0",
+    "fast-xml-parser": "^5.5.7",
+    "fs": "^0.0.1-security",
+    "helmet": "^8.1.0",
+    "net": "^1.0.2",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
+    "pdfkit": "^0.18.0",
+    "sax": "^1.6.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1",
+    "systeminformation": "^5.31.5"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.0",
+    "mock-fs": "^5.2.0",
+    "nock": "^13.4.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.1.1",
+    "supertest": "^6.3.3"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "js,json,hbs",
+    "ignore": [
+      "src/**/*.test.js"
+    ],
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }
+}
