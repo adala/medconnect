@@ -855,9 +855,12 @@ process.on('unhandledRejection', async (reason) => {
 // Start the gateway
 const gateway = new OffinGateway();
 
-gateway.start().catch((error) => {
-    console.error('❌ Failed to start gateway:', error);
-    process.exit(1);
-});
+// For local development - start the server
+if (require.main === module && !process.env.VERCEL) {
+    gateway.start().catch((error) => {
+        console.error('❌ Failed to start gateway:', error);
+        process.exit(1);
+    });
+}
 
 module.exports = gateway;
