@@ -3,10 +3,14 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY package.json ./
+
+COPY package.json package-lock.json ./
+
+COPY *.json ./
 
 # Install dependencies
-RUN npm install --production=false
+RUN npm install
 
 # Copy application
 COPY . .
