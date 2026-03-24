@@ -48,6 +48,15 @@ const SESSIONS_PATH = isRailway ? '/app/data' : './data';
 // Update port - Railway provides PORT env variable
 const PORT = process.env.PORT || 8080;
 
+console.log('='.repeat(50));
+console.log('🚀 Medconnect Gateway Starting...');
+console.log('='.repeat(50));
+console.log('Node version:', process.version);
+console.log('Current directory:', process.cwd());
+console.log('Environment:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT || 8080);
+console.log('='.repeat(50));
+
 class OffinGateway {
     constructor() {
         this.app = express();
