@@ -23,7 +23,6 @@ index-copy.js
 .env
 .env.local
 .env.production
-Dockerfile
 docker-compose.yml
 
 # Database files
