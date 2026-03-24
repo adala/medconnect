@@ -159,7 +159,6 @@ logs/
 =======
 # Dependencies
 node_modules/
-package-lock.json
 package-copy.json
 index-copy.js
 
