@@ -42,7 +42,7 @@ const webRoutes = require('./src/routes/web/index');
 const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.RAILWAY_SERVICE_NAME;
 
 // Update database path
-const DB_PATH = isRailway ? '/app/data/offin.db' : (process.env.DB_PATH || './data/offin.db');
+const DB_PATH = isRailway ? '/app/data/offin.db' : (process.env.DB_PATH);
 const SESSIONS_PATH = isRailway ? '/app/data' : './data';
 
 // Update port - Railway provides PORT env variable
