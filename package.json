@@ -2,7 +2,7 @@
   "name": "mc_gateway_ugmc",
   "version": "1.0.0",
   "description": "Medconnect - OFFIN Healthcare Medical Data Analysis System",
-  "main": "index.js",
+  "main": "gateway/index.js",
   "scripts": {
     "start": "node gateway/index.js",
     "dev": "nodemon gateway/index.js",
