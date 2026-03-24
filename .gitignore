@@ -23,11 +23,16 @@ index-copy.js
 .env
 .env.local
 .env.production
+Dockerfile
+docker-compose.yml
 
 # Database files
 *.db
 *.db-journal
 data/
+tests
+jest.config.js
+installer
 
 # Logs
 logs/
