@@ -14,6 +14,7 @@ RUN npm install
 
 # Copy application
 COPY . .
+COPY ./src /app/src
 
 # Create data directory
 RUN mkdir -p /app/data /app/logs /app/drop-folder/quarantine

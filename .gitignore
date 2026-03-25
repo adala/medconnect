@@ -15,7 +15,6 @@ logs/
 >>>>>>> 6656bb1 (Initial commit: Medconnet Gateway)
 =======
 # Dependencies
-node_modules/
 package-copy.json
 index-copy.js
 
