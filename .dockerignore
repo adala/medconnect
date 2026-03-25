@@ -1,0 +1,13 @@
+node_modules
+.git
+.env
+*.log
+.DS_Store
+*.db
+data/
+logs/
+drop-folder/
+.vercel
+.railway
+.github
+.vscode

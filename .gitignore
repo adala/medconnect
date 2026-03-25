@@ -9,7 +9,6 @@ node_modules/
 data/
 drop-folder/
 quarantine/
-logs/
 .DS_Store
 .vercel/
 >>>>>>> 6656bb1 (Initial commit: Medconnet Gateway)
@@ -46,14 +45,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-
-# Build files
-dist/
-build/
-
-# Vercel
-.vercel/
-
 
 # Local data
 drop-folder/
