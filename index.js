@@ -31,11 +31,11 @@ const SqliteStore = require('connect-sqlite3')(session);
 
 // Import route modules
 const apiAuthRoutes = require('./src/routes/api/authRoutes');
-const apiUserRoutes = require('./src/routes/api/userRoutes');
-const apiEcgRoutes = require('./src/routes/api/ecgRoutes');
-const apiSyncRoutes = require('./src/routes/api/syncRoutes');
-const apiPatientRoutes = require('./src/routes/api/patientRoutes');
-const webRoutes = require('./src/routes/web/index');
+// const apiUserRoutes = require('./src/routes/api/userRoutes');
+// const apiEcgRoutes = require('./src/routes/api/ecgRoutes');
+// const apiSyncRoutes = require('./src/routes/api/syncRoutes');
+// const apiPatientRoutes = require('./src/routes/api/patientRoutes');
+// const webRoutes = require('./src/routes/web/index');
 
 
 // At the top of the file, after require('dotenv').config()
